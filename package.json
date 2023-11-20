@@ -1,0 +1,22 @@
+{
+  "name": "auto-sync-to-imtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fsevents": "^2.3.3",
+    "glob": "^10.3.10",
+    "http-proxy-middleware": "^2.0.6",
+    "node-http-proxy": "^0.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.2",
+    "typescript": "^5.2.2"
+  }
+}
