@@ -14,43 +14,52 @@ const proxyServer = httpProxy.createProxyServer({
   xfwd: false
 });
 
+const isDocumentRequest = (req) => {
+  if (typeof req.headers['accept'] === "undefined") return false;
+  // 크롬, 사파리, 파이어폭스, Arc 브라우저 테스트해본 결과 아래 타입들이 document를 기대하는 요청임
+  if (!/text\/html/.test(req.headers["accept"])) return false;
+  if (!/application\/xhtml\+xml/.test(req.headers["accept"])) return false;
+  if (!/application\/xml/.test(req.headers["accept"])) return false;
+  return true;
+}
+
+proxyServer.on("proxyReq", (proxyReq, req) => {
+  if (typeof req.headers.referer === "undefined") return;
+  const { pathname } = new URL(req.headers.referer || `${target}/`);
+  proxyReq.setHeader("referer", target + pathname);
+});
+
+proxyServer.on(
+  "proxyRes",
+  responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+    // document를 기대하는 요청이 아니면 그냥 리턴
+    if (!isDocumentRequest(req)) {
+      return responseBuffer;
+    }
+
+    const bodyBuffer = Buffer.concat([
+      responseBuffer,
+      Buffer.from("<!-- Hello World -->"),
+    ]);
+    
+    return bodyBuffer
+  })
+);
+
+
 //
 // Create your server that makes an operation that waits a while
 // and then proxies the request
 //
 http
   .createServer(function (req, res) {
-    proxyServer.web(req, res, {
+    return proxyServer.web(req, res, {
       changeOrigin: true,
       selfHandleResponse: true,
       cookieDomainRewrite: {
         "*": "",
       },
     });
-    // proxyServer.on("proxyReq", (proxyReq, req) => {
-    //   if (typeof req.headers.referer === "undefined") return;
-    //   const { pathname } = new URL(req.headers.referer || `${target}/`);
-    //   proxyReq.setHeader("referer", target + pathname);
-    // });
-    proxyServer.on(
-      "proxyRes",
-      responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-        // document를 기대하는 요청이 아니면 그냥 리턴
-        if (!/text\/html/.test(req.headers["accept"])) {
-          return responseBuffer;
-        }
-
-        console.log(req.headers["accept"]);
-
-        const bodyBuffer = Buffer.concat([
-          responseBuffer,
-          Buffer.from("<!-- Hello World -->"),
-        ]);
-        res.setHeader("content-length", bodyBuffer.length);
-        
-        return bodyBuffer
-      })
-    );
   })
   .listen(8800);
 
