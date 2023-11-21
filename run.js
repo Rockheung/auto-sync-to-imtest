@@ -10,6 +10,8 @@ const { WebSocketServer } = require("ws");
 // program.option("-c, --config <file>", "config file path");
 // program.option("-d, --debug", "config file path");
 
+
+// node run.js "https://jissp.imtest.me" ~/imwebme/imweb
 const [, , targetOrigin, watchPath] = process.argv;
 const CWD = watchPath ?? process.cwd();
 const msgRefresh = "refresh";
