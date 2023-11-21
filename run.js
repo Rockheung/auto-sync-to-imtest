@@ -19,7 +19,7 @@ console.log("watch:", CWD);
 // HARD CODE for now
 const watchFiles = glob.sync(`${CWD}/**/*.{cm,sub,cls}`, {
   ignore: ["node_modules/**/*", ".git/**/*"],
-});
+}).reduce((acc, cur) => { acc[cur] = true; return acc; }, {})
 
 const isDocumentRequest = (req) => {
   if (typeof req.headers["accept"] === "undefined") return false;
@@ -104,6 +104,7 @@ wss.on("connection", function connection(ws) {
 // To start observation
 const stop = fsevents.watch(CWD, (path, flags, id) => {
   const info = fsevents.getInfo(path, flags);
+  if (typeof watchFiles[path] === "undefined") return;
   console.log("🚀 ~ file: run.js:5 ~ stop ~ __dirname:", watchPath, info);
 });
 
