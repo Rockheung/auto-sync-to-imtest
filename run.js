@@ -9,6 +9,17 @@ const { WebSocketServer } = require("ws");
 
 // program.option("-c, --config <file>", "config file path");
 // program.option("-d, --debug", "config file path");
+// TODO: options
+// noRefresh: true
+// refreshDelay: number
+// watchFiles: string[]
+// watchIgnore: string[]
+// watchPattern: string | RegExp | Glob
+// watchPath: string
+// targetOrigin: string
+// fileDiff 방식이 필요할까?: md5, just diff on shell, modified time, file size, 
+// rsync 에 디바운스가 필요함. head 방식, 이후 갱신은 0.1초 등 지연시켜야. 
+
 
 
 // node run.js "https://jissp.imtest.me" ~/imwebme/imweb
